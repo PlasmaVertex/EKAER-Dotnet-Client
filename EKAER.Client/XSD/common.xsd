@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2014 sp1 (x64) (http://www.altova.com) by Agnes Septey (i-Cell Mobilsoft Zrt.) -->
-<xs:schema xmlns="http://schemas.nav.gov.hu/EKAER/1.0/common" xmlns:tns="http://schemas.nav.gov.hu/EKAER/1.0/common" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.nav.gov.hu/EKAER/1.0/common" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns="http://schemas.nav.gov.hu/EKAER/1.0/common" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   targetNamespace="http://schemas.nav.gov.hu/EKAER/1.0/common" elementFormDefault="qualified"
+		   attributeFormDefault="unqualified">
 	<xs:annotation>
 		<xs:documentation>
 EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
@@ -10,7 +12,18 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
       2015.02.19 T.K Email 200 hosszú lehet max!
 1.7 2015.03.18 B.G. TradeCardType típus egyszerüsített és normál bejelentés
 1.8 2015.04.22 B.G. GPSCoordType módosult, lat -> latitude, long -> longitude
-</xs:documentation>
+1.10 2016.08.29 C.L TC_CUSTOMER_HIBERNATE_DENIED
+1.10 2016.08.30 CL TC_CARRIER_HIBERNATED
+     2019.01.31 HJ ZipCodeType 10 hosszú lehet max
+     2019.03.07 HJ TC_LOADDATE_TIME_WARN (TCDEV-3696)
+ 	 2019.03.08 LF TC_ARRIVALDATE_TIME_ERROR
+ 	 2019.03.19 LF Új típus: TimestampType
+ 	 2019.06.05 LF Új típus: SimpleText40NotBlankType
+	 2019.09.30 VZS TC_INVALID_COUNTRY_CODE
+   	 2019.10.10 VZS	TC_INVALID_VAT_NUMBER_COUNTRY_CODE
+     2019.06.05 LF Új típus: SimpleText40NotBlankType
+     2020.12.01 HJ TCI_INVALID_ASSURANCE_STATEMENT
+		</xs:documentation>
 	</xs:annotation>
 	<!-- BASIC SIMPLE -->
 	<xs:simpleType name="TCNType">
@@ -19,6 +32,13 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:pattern value="[A-Z0-9]{2,20}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ISOCountryCodeA2Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="3"/>
+			<xs:pattern value="[A-Z]{1,3}"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="LicensePlateNumberType">
@@ -43,9 +63,34 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
             <xs:maxLength value="15"/>
         </xs:restriction>
     </xs:simpleType>
+    <xs:simpleType name="Id20Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Id30Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="30"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<xs:simpleType name="SimpleText10Type">
 		<xs:restriction base="xs:string">
 			<xs:maxLength value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SimpleText15Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="15"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SimpleText20Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SimpleText30Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="30"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="SimpleText50Type">
@@ -61,6 +106,25 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
 	<xs:simpleType name="SimpleText200Type">
 		<xs:restriction base="xs:string">
 			<xs:maxLength value="200"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SimpleText1000Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="1000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SimpleText40NotBlankType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1" />
+			<xs:maxLength value="40" />
+			<xs:pattern value=".*\S.*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SimpleText500NotBlankType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1" />
+			<xs:maxLength value="500" />
+			<xs:pattern value=".*\S.*"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="UserNameType">
@@ -123,8 +187,18 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:minLength value="2"/>
-			<xs:maxLength value="7"/>
-			<xs:pattern value="([A-Z0-9 \-]{2,7})|()"/>
+			<xs:maxLength value="10"/>
+			<xs:pattern value="([A-Z0-9 \-]{2,10})|()"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TimestampType">
+		<xs:annotation>
+			<xs:documentation xml:lang="hu">Időbélyeg típus</xs:documentation>
+			<xs:documentation xml:lang="en">Timestamp type</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:dateTime">
+			<xs:minInclusive value="2010-01-01T00:00:00+01:00"/>
+			<xs:pattern value="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.[\d]+)?(([\+\-]\d{2}:\d{2})|Z)"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="UnloadReporterType">
@@ -233,6 +307,23 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
 			</xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:simpleType name="VrsEventOwnerType">
+		<xs:annotation>
+			<xs:documentation>Eseményt rögzítő társrendszer</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="IKSZR">
+				<xs:annotation>
+					<xs:documentation>Fővárosi kamera</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="VRS">
+				<xs:annotation>
+					<xs:documentation>Országos kamerarendszer</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>	
 	<!-- BASIC COMMON -->
 	<xs:simpleType name="IdType">
 		<xs:restriction base="xs:string">
@@ -321,7 +412,601 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
 					<xs:documentation>A kért csomag verzió még nem létezik!</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
+			<xs:enumeration value="CARRIER_NOT_FOUND">
+				<xs:annotation>
+					<xs:documentation>A megadott azonosítóhoz nem tartozik érvényesített szállítmányozói regisztráció!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_ITEM_NOT_FOUND">
+				<xs:annotation>
+					<xs:documentation>Bejelentésenként/menetlevelenként legalább egy tétel megadása kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_CREATE_ELEMENT_FOUND">
+				<xs:annotation>
+					<xs:documentation>Létrehozás esetén a tradeCard –on belül a tcn element-et el kell hagyni!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_BOTH_CARRIER_FOUND">
+				<xs:annotation>
+					<xs:documentation>carrier, carrierText: vagy az egyiket vagy a másikat kell magadni!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_ID_FOUND">
+				<xs:annotation>
+					<xs:documentation>A tradeCardItem element-en belül az id attribute-umot el kell hagyni!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_NAME_EMPTY">
+				<xs:annotation>
+					<xs:documentation>sellerName: A fuvar irányától függetlenül, minden esetben kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_VAT_NUMBER_EMPTY">
+				<xs:annotation>
+					<xs:documentation>sellerVatNumber: A fuvar irányától függetlenül, minden esetben kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_VAT_NUMBER_ERROR">
+				<xs:annotation>
+					<xs:documentation>sellerVatNumber: Hibás adószám!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_VAT_NUMBER_CDV_ERROR">
+				<xs:annotation>
+					<xs:documentation>sellerVatNumber: Hibás adószám! Csak v1.10 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FOREIGN_VAT_NUMBER_COUNTRY_CODE_MISMATCH">
+				<xs:annotation>
+					<xs:documentation>Országkód eltérés! Csak v1.10 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_COUNTRY_EMPTY">
+				<xs:annotation>
+					<xs:documentation>sellerCountry: tradeType E és D esetén kötelező</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_ADDRESS_EMPTY">
+				<xs:annotation>
+					<xs:documentation>sellerAddress: tradeType E és D esetén kötelező</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DESTINATION_NAME_EMPTY">
+				<xs:annotation>
+					<xs:documentation>destinationName: A fuvar irányától függetlenül, minden esetben kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DESTINATION_VAT_NUMBER_EMPTY">
+				<xs:annotation>
+					<xs:documentation>destinationVatNumber: A fuvar irányától függetlenül, minden esetben kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DESTINATION_VAT_NUMBER_ERROR">
+				<xs:annotation>
+					<xs:documentation>destinationVatNumber: Hibás adószám!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DESTINATION_VAT_NUMBER_CDV_ERROR">
+				<xs:annotation>
+					<xs:documentation>destinationVatNumber: Hibás adószám! Csak v1.10 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DESTINATION_COUNTRY_EMPTY">
+				<xs:annotation>
+					<xs:documentation>destinationCountrye: tradeType I esetén kötelező</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DESTINATION_ADDRESS_EMPTY">
+				<xs:annotation>
+					<xs:documentation>destinationAddress: tradeType I esetén kötelező</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_LOAD_LOCATION_NOT_FOUND">
+				<xs:annotation>
+					<xs:documentation>A fuvar irányától függetlenül, minden esetben kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_LOAD_LOCATION_CANT_BE_HUNGARY">
+				<xs:annotation>
+					<xs:documentation>loadLocation: tradeType I esetén nem lehet 'HU'</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_UNLOAD_LOCATION_NOT_FOUND">
+				<xs:annotation>
+					<xs:documentation>A fuvar irányától függetlenül, minden esetben kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_UNLOAD_LOCATION_CANT_BE_HUNGARY">
+				<xs:annotation>
+					<xs:documentation>unloadLocation: tradeType E esetén nem lehet 'HU'</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_VEHICLE_NOT_FOUND">
+				<xs:annotation>
+					<xs:documentation>vehicle: tradeType E és D esetén kötelező</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_LOCATION_NOT_HUNGARY">
+				<xs:annotation>
+					<xs:documentation>Magyar címnek kell lennie!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_LOCATION_NOT_COMPLETE">
+				<xs:annotation>
+					<xs:documentation>A címadatoknál a name, vatNumber, country, zipCode, city, street mezők kötelezőek!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DELETE_ONLY_ACTIVE">
+				<xs:annotation>
+					<xs:documentation>A törlés csak akkor hajtható végre, ha még “aktív” a bejelentés!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZE_VEHICLE_DATA_EMPTY">
+				<xs:annotation>
+					<xs:documentation>vehicle/plateNumber: A bejelentés véglegesítése előtt ki kell tölteni</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZE_ARRIVAL_DATE_EMPTY">
+				<xs:annotation>
+					<xs:documentation>arrivalDate: A bejelentés véglegesítése előtt ki kell tölteni</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_MODIFY_BY_CARRIER_DISABLED">
+				<xs:annotation>
+					<xs:documentation>A szállító nem módosíthatja a bejelentést!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_DANG_PROD_ADRNUMBER_NOT_FOUND">
+				<xs:annotation>
+					<xs:documentation>addrNumber: veszélyes tétel esetén kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_DANG_PROD_TRANSLIC_NOT_FOUND">
+				<xs:annotation>
+					<xs:documentation>trasportLicense: veszélyes tétel esetén kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DESTINATION_MUST_BE_HUNGARY">
+				<xs:annotation>
+					<xs:documentation>destinationCountry: tradeType I esetén csak 'HU' lehet</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DESTINATION_CANT_BE_HUNGARY">
+				<xs:annotation>
+					<xs:documentation>destinationCountry: tradeType E esetén nem lehet 'HU'</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_MUST_BE_HUNGARY">
+				<xs:annotation>
+					<xs:documentation>sellerCountry: tradeType E esetén csak 'HU' lehet</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_CANT_BE_HUNGARY">
+				<xs:annotation>
+					<xs:documentation>sellerCountry: tradeType I esetén nem lehet 'HU'</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="INVALID_USER_OR_PASSWORD">
+				<xs:annotation>
+					<xs:documentation>Érvénytelen belépési adatok!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ACCESS_DENIED">
+				<xs:annotation>
+					<xs:documentation>A hívónak nincs joga a művelet végrehajtásához!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="NO_TAX_DATA">
+				<xs:annotation>
+					<xs:documentation>Az adófizető adatai nem találhatóak!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="USER_TAX_DATA_NOT_VALID">
+				<xs:annotation>
+					<xs:documentation>A felhasználó adófizetői adatai nem érvényesek!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_VTSZ_TOO_SHORT">
+				<xs:annotation>
+					<xs:documentation>destinationCountry: tradeType E esetén csak 'HU' lehet</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_VTSZ_UNKNOWN">
+				<xs:annotation>
+					<xs:documentation>VTSZ nem ismert, érvénytelen!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FELIR_NEBIH_REG_NEEDED">
+				<xs:annotation>
+					<xs:documentation>NÉBIH felír szám szükséges az áru bejelentéséhez!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_UNLOAD_ADDR_MUST_BE_REG_IN_NEBIH">
+				<xs:annotation>
+					<xs:documentation>Nébih által engedélyezett első betárolási helynek nem felel meg a cím:</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_INVALID_LOADDATE">
+				<xs:annotation>
+					<xs:documentation>Érvénytelen felrakodási időpont!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_INVALID_ARRIVALDATE">
+				<xs:annotation>
+					<xs:documentation>Érvénytelen érkezési időpont!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_VALIDITY_EXCEEDED">
+				<xs:annotation>
+					<xs:documentation>Az érvényességi idő túl lett lépve!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_PLATENUMBER_MISSING">
+				<xs:annotation>
+					<xs:documentation>A rendszám megadása kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_PLATENUMBER_COUNTRY_MISSING">
+				<xs:annotation>
+					<xs:documentation>A rendszám vagy felségjel nincs megadva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FUTURE_ARRIVAL_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>Jövőbeli érkezési időpont nem megengedett!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_ARRIVALDATE_MISSING">
+				<xs:annotation>
+					<xs:documentation>Az érkezési időpont kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_LOADDATE_MISSING">
+				<xs:annotation>
+					<xs:documentation>A berakodási időpont kötelező!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="INVALID_REASON_WITH_TRADE_TYPE">
+				<xs:annotation>
+					<xs:documentation>A fuvar okok a tételnél a fuvar irányultságtól függően meghatározottak lehetnek csak!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_UPLOAD_ACCESS_DENIED">
+				<xs:annotation>
+					<xs:documentation>A hívónak nincs joga a feltöltés végrehajtásához!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_OP_INDEX_NOT_UNIQUE">
+				<xs:annotation>
+					<xs:documentation>A kérésben szereplő indexek egymáshoz képést nem egyediek!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_MODIFICATION_DISABLED">
+				<xs:annotation>
+					<xs:documentation>A módosítás törölt, inaktív vagy véglegesített státuszban nem engedélyezett!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_PLATE_NUMBER_MOD_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>
+						A rendszám módosítására nincsen joga
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_UNLOAD_REPORT_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>
+						Az árumegérkezés lejelentéséhez nincsen joga
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CARRIER_NOT_ASSIGNED">
+				<xs:annotation>
+					<xs:documentation>
+						A bejelentő nem engedélyezte a bejelentés kezelését!
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_WEIGHT_MOD_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>
+						Az árutétel tömegének módosításához nincs joga!
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_VALUE_MOD_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>
+						Az árutétel értékének módosításához nincs joga!
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="INVALID_VATNUMBER">
+				<xs:annotation>
+					<xs:documentation>Hibás adószám! Csak v1.6 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="INVALID_TAXIDENTICATIONNUMBER">
+				<xs:annotation>
+					<xs:documentation>Hibás adóazonosító! Csak v1.6 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_MODIFY_PRODUCT_DISABLED">
+				<xs:annotation>
+					<xs:documentation>A termék VTSZ-e és a termék név nem módosítható! Csak v1.6 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_LOAD_VAT_NUMBER_ERROR">
+				<xs:annotation>
+					<xs:documentation>Felrakodási adószám helytelen! Csak v1.6 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_UNLOAD_VAT_NUMBER_ERROR">
+				<xs:annotation>
+					<xs:documentation>Lerakodási adószám helytelen! Csak v1.6 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_VALUE_MISSING">
+				<xs:annotation>
+					<xs:documentation>Az árutétel értéke hiányzik! Csak v1.6 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_MOD_REASON_MISSING">
+				<xs:annotation>
+					<xs:documentation>A módosítás okának megadása kötelező! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_MOD_REASON_MISSING">
+				<xs:annotation>
+					<xs:documentation>A módosítás okának megadása kötelező! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_ONLY_SELLER_DELIVERY_ALLOWED_WITH_TRADETYPE">
+				<xs:annotation>
+					<xs:documentation>A tradeType értéke csak 'D' lehet! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_VATNUMBER_MUST_BE_CUSTOMERS">
+				<xs:annotation>
+					<xs:documentation>A sellerVatNumber nem egyezik az adott customer rögzített adószámával! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DESTINATION_VATNUMBER_MUST_BE_CUSTOMERS">
+				<xs:annotation>
+					<xs:documentation>A destinationVatNumber nem egyezik az adott customer rögzített adószámával! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_RISKY_TRADECARD_ITEM_ONLY_ALLOWED_WITH_SELLER_DELIVERY">
+				<xs:annotation>
+					<xs:documentation>A kockázatos termék nem engedélyezett! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_SELLER_DELIVERY_MOD_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>A isSellerDelivery módosítás nem engedélyezett! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZE_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>Véglegesítés nem engedélyezett! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_UNLOAD_LOCATION_COMPANY_INFO_MISSING">
+				<xs:annotation>
+					<xs:documentation>Cégadatok hianyosak! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_IS_DESTINATION_COMPANY_IDENTICAL_MISSING">
+				<xs:annotation>
+					<xs:documentation>A 'címzett azonos-e a kirakodás címzetjével' nyilatkozat kötelező! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_IS_DESTINATION_COMPANY_REQUIRED">
+				<xs:annotation>
+					<xs:documentation>A 'címzett azonos-e a kirakodás címzetjével' nyilatkozat vagy kirakodás cégadatok kötelezőek! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_NOT_ALLOWED_DATA_MODIFICATION">
+				<xs:annotation>
+					<xs:documentation>Nem engedélyezett adatmódostás! Csak v1.7 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_GPS_DATA_NOT_ALLOWED_WITH_RISKY_ITEM">
+				<xs:annotation>
+					<xs:documentation>GPS koordináta nem adható meg, ha a tételek között kozkázatos szerepel! Csak v1.8 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="INVALID_TRANSACTION_STATE">
+				<xs:annotation>
+					<xs:documentation>Tranzakció sátusza alapján nem végrehajtható a kérés! Csak v1.8 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_DELIVERY_PLAN_MISSING">
+				<xs:annotation>
+					<xs:documentation>A bejelentéshez nem található menetlevél! Csak v1.8 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_STATUS_MOD_REASON_MISSING">
+				<xs:annotation>
+					<xs:documentation>A tétel módosítás okának megadása kötelező! Csak v1.8 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_PRODUCT_MOD_REASON_MISSING">
+				<xs:annotation>
+					<xs:documentation>A termék módosítás okának megadása kötelező! Csak v1.8 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_UNKNOWN_LICENCE_PLATE_COUNTRY_CODE">
+				<xs:annotation>
+					<xs:documentation>Felségjel nem ismert, érvénytelen! Csak v1.9 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+            <xs:enumeration value="NO_VALID_MASTER_USER">
+                <xs:annotation>
+                    <xs:documentation>A regisztrációhoz nem található érvényes elsődleges felhasználó, a belépés nem megengedett!  Csak v1.9 verziótól van használva!</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="TCI_ITEM_OPERATION_MISSING">
+                <xs:annotation>
+                    <xs:documentation>item-ben kötelező az operation-t küldeni! Csak v1.9 verziótól van használva!</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="TCI_PRODUCT_MOD_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>Az árutétel termék módosításához nincs joga! Csak v1.9 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_CREATE_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>Az árutétel létrehozásához nincs joga! Csak v1.9 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_DELETE_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>Az árutétel törléséhez nincs joga! Csak v1.9 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LOW_BALANCE">
+				<xs:annotation>
+					<xs:documentation>Fedezethiány! Csak v1.9 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_INACTIVE_CPA_FOUND">
+				<xs:annotation>
+					<xs:documentation>A bejelentéshez inaktív vtsz-el rendelkező tétel tartozik! Csak 1.9 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_LOAD_LOCATION_ERROR">
+				<xs:annotation>
+					<xs:documentation>A menetlevélhez tartozó lerakodási cím rossz! Csak 1.10 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_UNLOAD_LOCATION_ERROR">
+				<xs:annotation>
+					<xs:documentation>A menetlevélhez tartozó fellerakodási cím rossz! Csak 1.10 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_LOAD_AND_UNLOAD_LOCATION_ERROR">
+				<xs:annotation>
+					<xs:documentation>A menetlevélhez tartozó lerakodási és felrakodási cím rossz! Csak 1.10 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_REQUEST_VERSION_ERROR">
+				<xs:annotation>
+					<xs:documentation>Nem megfelelő verzió! Csak 1.10 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_TCN_NOT_UNIQUE">
+				<xs:annotation>
+					<xs:documentation>Adott TCN egy kérésben csak egyszer szerepelhet! Csak carrier 1.0 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_TRADE_REASON_MISSING">
+				<xs:annotation>
+					<xs:documentation>A tétel beszerzési okának megadása kötelező tétel létrehozásakor! Csak carrier 1.0 verziótól van használva!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_CUSTOMER_HIBERNATE_DENIED">
+				<xs:annotation>
+					<xs:documentation>Nem lehet hibernálni!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_CARRIER_HIBERNATED">
+				<xs:annotation>
+					<xs:documentation>A Carrier törlés van!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_LOADDATE_TIME_WARN">
+				<xs:annotation>
+					<xs:documentation>Felrakodás dátuma nem definiált!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_ARRIVALDATE_TIME_ERROR">
+				<xs:annotation>
+					<xs:documentation>A kirakodás időpontja csak a megérkezés bejelentésekor, az EKAER szám lezáráskor adható meg!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_INVALID_COUNTRY_CODE">
+				<xs:annotation>
+					<xs:documentation>Érvénytelen országkód!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_INVALID_VAT_NUMBER_COUNTRY_CODE">
+				<xs:annotation>
+					<xs:documentation>Érvénytelen országkód az adószámban!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZED_MOD_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>A bejelentés a vonatkozó jogszabályok alapján nem módosítható!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZED_CARRIER_MOD_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>A bejelentés utólagos módosítása szállítmányozónak nem engedélyezett!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZED_EXPORT_MOD_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>Export bejelentések nem módosíthatóak lezárást követően!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZED_NO_MORE_MOD_ATTEMPTS">
+				<xs:annotation>
+					<xs:documentation>A bejelentés több alkalommal nem módosítható!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZED_MOD_INVALID_DATA_CHANGE">
+				<xs:annotation>
+					<xs:documentation>Csak a vonatkozó rendeletben meghatározott adatok módosíthatók!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZED_ITEM_DELETE_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>A bejelentésben szereplő termékek nem törölhetők!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZED_ITEM_CREATE_NOT_ALLOWED">
+				<xs:annotation>
+					<xs:documentation>A bejelentéshez nem adható hozzá új termék!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_FINALIZED_MOD_NO_DATA_CHANGE">
+				<xs:annotation>
+					<xs:documentation>A módosítás nem tartalmaz adatváltozást!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_VAT_NUMBER_WARN">
+				<xs:annotation>
+					<xs:documentation>A Feladó/Címzett adószáma "HU" országkódot tartalmaz!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TC_VAT_NUMBER_ERROR">
+				<xs:annotation>
+					<xs:documentation>A feladó és címzett adószáma megegyezik!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TCI_INVALID_ASSURANCE_STATEMENT">
+				<xs:annotation>
+					<xs:documentation>A megadott VTSZ esetében nem nyilatkozhat az ÁFA kulcs miatti biztosíték mentességről!</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
 		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IPv4AddressType">
+  		<xs:annotation>
+    		<xs:documentation>IPv4 address in dot-decimal notation. Equivalent to [0-255].[0-255].[0-255].[0-255]</xs:documentation>
+  		</xs:annotation>
+  		<xs:restriction base="xs:string">
+    		<xs:pattern value="((1?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.){3}(1?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])" />
+  		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IPPortType">
+  		<xs:restriction base="xs:integer">
+     		<xs:minInclusive value="1024"/>
+     		<xs:maxInclusive value="65535"/>
+  		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="BasicHeaderType">
 		<xs:attribute name="requestId" type="CommonIdType" use="required">
@@ -344,7 +1029,7 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
 		<xs:sequence>
 			<xs:element name="funcCode" type="FunctionCodeType">
 				<xs:annotation>
-					<xs:documentation>Sikeresség: SUCCESS, hiba ERROR, vagy WARNING</xs:documentation>
+					<xs:documentation>Sikeresség: OK, hiba ERROR, vagy WARNING</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="reasonCode" type="ReasonCodeType">
@@ -400,6 +1085,7 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
 						</xs:annotation>
 					</xs:element>
 				</xs:sequence>
+                <xs:attribute name="itemCount" type="xs:decimal" use="optional"/>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -446,6 +1132,31 @@ EKAER-ből ezen a szolgáltatáson keresztül lehet lekérdezni az adatokat!
 						<xs:maxExclusive value="9999.99999999999999"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AllowanceListType">
+		<xs:annotation>
+			<xs:documentation>Lezárt bejelentés módosításából eredő pótlékok lista típusa.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="allowance" type="AllowanceType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AllowanceType">
+		<xs:annotation>
+			<xs:documentation>Lezárt bejelentés módosításából eredő pótlékok típusa.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="allowanceValue" type="xs:decimal">
+				<xs:annotation>
+					<xs:documentation>A kiszabott pótlék összege</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="allowanceDueDate" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>A kiszabott pótlék esedékessége</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

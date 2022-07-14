@@ -65,7 +65,7 @@ namespace EKAER.Client
                 Timestamp = DateTime.Now,
                 RequestId = GenerateRequestId(),
                 HeaderVersion = Constants.HEADERVERSION,
-                RequestVersion = Constants.REQUESTVERSION
+                RequestVersion = ManagementVersionType.Item2Period1
             };
         }
 

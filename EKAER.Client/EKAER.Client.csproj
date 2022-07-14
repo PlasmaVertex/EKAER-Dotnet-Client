@@ -27,5 +27,10 @@ Finalize your trade cards</Description>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>exported.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
+    <Version>1.2.1</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
 </Project>

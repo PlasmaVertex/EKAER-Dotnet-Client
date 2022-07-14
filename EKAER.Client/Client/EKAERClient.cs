@@ -41,13 +41,13 @@ namespace EKAER.Client
         /// </summary>
         /// <param name="tcn">TradeCard number (tcn)</param>
         /// <returns>TradeCardInfoType object</returns>
-        public TradeCardInfo QueryTradeCard(string tcn)
+        public TradeCardInfoType QueryTradeCard(string tcn)
         {
             if (!Validators.IsValidTradeCardNumber(tcn)) throw new ArgumentException(tcn);
             QueryTradeCardsRequest request = BuildRequest<QueryTradeCardsRequest>();
             request.Tcn = tcn;
             var response = Request<QueryTradeCardsResponse, QueryTradeCardsRequest>(QUERY_TRADE_CARDS, request);
-            if (response.Result.FuncCode != FunctionCode.ERROR)
+            if (response.Result.FuncCode != FunctionCodeType.ERROR)
             {
                 return response.TradeCards.Count > 0 ? response.TradeCards[0] : null;
             }
@@ -59,13 +59,13 @@ namespace EKAER.Client
         /// </summary>
         /// <param name="queryParams">The filter parameters</param>
         /// <returns>ICollection&lt;TradeCardInfoType&gt;</returns>
-        public ICollection<TradeCardInfo> QueryTradeCard(QueryParams queryParams)
+        public ICollection<TradeCardInfoType> QueryTradeCard(QueryParamsType queryParams)
         {            
             queryParams.Validate();
             var request = BuildRequest<QueryTradeCardsRequest>();           
             request.QueryParams = queryParams;
             var response = Request<QueryTradeCardsResponse, QueryTradeCardsRequest>(QUERY_TRADE_CARDS, request);
-            if (response.Result.FuncCode != FunctionCode.ERROR)
+            if (response.Result.FuncCode != FunctionCodeType.ERROR)
             {
                 return response.TradeCards;
             }
@@ -82,29 +82,29 @@ namespace EKAER.Client
             var result = DeleteTradeCards(new Dictionary<string, string> { { tcn, reason } });
             error = result.FirstOrDefault()?.Result.Msg;
             if(result != null && result.Count > 0)
-                return result.First().Result.FuncCode != FunctionCode.ERROR;
+                return result.First().Result.FuncCode != FunctionCodeType.ERROR;
             return false;
         }
 
-        public ICollection<TradeCardOperationResult> DeleteTradeCards(IDictionary<string, string> tcnsAndReasons)
+        public ICollection<TradeCardOperationResultType> DeleteTradeCards(IDictionary<string, string> tcnsAndReasons)
         {            
             var request = BuildRequest<ManageTradeCardsRequest>();
             var index = 0;
             foreach (var elem in tcnsAndReasons)
             {
-                request.TradeCardOperations.Add(new TradeCardOperation { Index = index++, Operation = OperationType.Delete, Tcn = elem.Key, StatusChangeModReasonText = elem.Value });
+                request.TradeCardOperations.Add(new TradeCardOperationType { Index = index++, Operation = OperationType.Delete, Tcn = elem.Key, StatusChangeModReasonText = elem.Value });
             }
             var response = Request<ManageTradeCardsResponse, ManageTradeCardsRequest>(MANAGE_TRADE_CARDS, request);
-            if (response.Result.FuncCode != FunctionCode.ERROR)
+            if (response.Result.FuncCode != FunctionCodeType.ERROR)
             {                
                 return response.TradeCardOperationsResults;
             }
             throw new EKAERException(response.Result);
         }
 
-        public TradeCardOperationResult ValidateTradeCard(TradeCard tradeCard)
+        public TradeCardOperationResultType ValidateTradeCard(TradeCardType tradeCard)
         {
-            var result = ValidateTradeCards(new List<TradeCard> { tradeCard });
+            var result = ValidateTradeCards(new List<TradeCardType> { tradeCard });
             if(result != null && result.Count > 0)
             {
                 return result.First();
@@ -112,13 +112,13 @@ namespace EKAER.Client
             return null;
         }
 
-        public ICollection<TradeCardOperationResult> ValidateTradeCards(IEnumerable<TradeCard> tradeCards)
+        public ICollection<TradeCardOperationResultType> ValidateTradeCards(IEnumerable<TradeCardType> tradeCards)
         {
             var request = BuildRequest<ManageTradeCardsRequest>();
             var index = 0;
             foreach (var tradeCard in tradeCards)
             {
-                var operation = new TradeCardOperation
+                var operation = new TradeCardOperationType
                 {
                     Index = index++,
                     Operation = OperationType.Create,
@@ -127,14 +127,14 @@ namespace EKAER.Client
                 request.TradeCardOperations.Add(operation);
             }
             var response = Request<ManageTradeCardsResponse, ManageTradeCardsRequest>(VALIDATE_TRADE_CARDS, request);
-            if (response.Result.FuncCode != FunctionCode.ERROR)
+            if (response.Result.FuncCode != FunctionCodeType.ERROR)
             {
                 return response.TradeCardOperationsResults;
             }
             throw new EKAERException(response.Result);
         }
 
-        public void LocalValidate(TradeCard tradeCard)
+        public void LocalValidate(TradeCardType tradeCard)
         {
             if (!Validators.IsValidVatNumber(tradeCard.SellerVatNumber))
                 throw new ArgumentException("Seller VAT number is not valid");
@@ -144,24 +144,24 @@ namespace EKAER.Client
                 throw new ArgumentException(string.Format("{0} is not a valid hungarian VAT number", tradeCard.SellerVatNumber));
             if (tradeCard.DestinationCountry == "HU" && tradeCard.DestinationVatNumber.Length != 8)
                 throw new ArgumentException(string.Format("{0} is not a valid hungarian VAT number", tradeCard.SellerVatNumber));
-            if (tradeCard.TradeType == Schema.Common.TradeType.Domestic || tradeCard.TradeType == Schema.Common.TradeType.Export)
+            if (tradeCard.TradeType == Schema.Common.TradeType.D || tradeCard.TradeType == Schema.Common.TradeType.E)
             {
                 if (string.IsNullOrEmpty(tradeCard.SellerCountry))
                     throw new ArgumentException("Seller country required when TradeType is Export or Domestic");
                 if (string.IsNullOrEmpty(tradeCard.SellerAddress))
                     throw new ArgumentException("Seller address required when TradeType is Export or Domestic");
             }
-            if (tradeCard.TradeType == Schema.Common.TradeType.Domestic || tradeCard.TradeType == Schema.Common.TradeType.Import)
+            if (tradeCard.TradeType == Schema.Common.TradeType.D || tradeCard.TradeType == Schema.Common.TradeType.I)
             {
                 if (string.IsNullOrEmpty(tradeCard.DestinationCountry))
                     throw new ArgumentException("Destination country required when TradeType is Import or Domestic");
                 if (string.IsNullOrEmpty(tradeCard.DestinationAddress))
                     throw new ArgumentException("Destination address required when TradeType is Import or Domestic");
             }
-            if(tradeCard.TradeType == Schema.Common.TradeType.Import && tradeCard.SellerCountry.Equals("HU"))            
+            if(tradeCard.TradeType == Schema.Common.TradeType.I && tradeCard.SellerCountry.Equals("HU"))            
                 throw new ArgumentException("Seller country must not be HU when TradeType is import");
             
-            if(tradeCard.TradeType == Schema.Common.TradeType.Export && !tradeCard.SellerCountry.Equals("HU"))
+            if(tradeCard.TradeType == Schema.Common.TradeType.E && !tradeCard.SellerCountry.Equals("HU"))
                 throw new ArgumentException("Seller country must be HU when tradeType is Export");
 
             if (string.IsNullOrEmpty(tradeCard.SellerName))
@@ -184,9 +184,9 @@ namespace EKAER.Client
             }
         }
 
-        public TradeCardInfo CreateTradeCard(TradeCard tradeCard)
+        public TradeCardInfoType CreateTradeCard(TradeCardType tradeCard)
         {
-            CreateTradeCards(new List<TradeCard>() { tradeCard }, out IEnumerable<TradeCardOperationResult> errors, out IEnumerable<TradeCardInfo> success);
+            CreateTradeCards(new List<TradeCardType>() { tradeCard }, out IEnumerable<TradeCardOperationResultType> errors, out IEnumerable<TradeCardInfoType> success);
             if(errors != null && errors.Count() > 0)
             {
                 throw new EKAERException(errors.First().Result);
@@ -195,14 +195,14 @@ namespace EKAER.Client
             return newCard;
         }
 
-        public void CreateTradeCards(IEnumerable<TradeCard> tradeCards, out IEnumerable<TradeCardOperationResult> errors, out IEnumerable<TradeCardInfo> success)
+        public void CreateTradeCards(IEnumerable<TradeCardType> tradeCards, out IEnumerable<TradeCardOperationResultType> errors, out IEnumerable<TradeCardInfoType> success)
         {
             var request = BuildRequest<ManageTradeCardsRequest>();
             var index = 0;
             foreach (var tradeCard in tradeCards)
             {
                 LocalValidate(tradeCard);
-                request.TradeCardOperations.Add(new TradeCardOperation
+                request.TradeCardOperations.Add(new TradeCardOperationType
                 {
                     Index = index++,
                     Operation = OperationType.Create,
@@ -210,30 +210,30 @@ namespace EKAER.Client
                 });                
             }
             var response = Request<ManageTradeCardsResponse, ManageTradeCardsRequest>(MANAGE_TRADE_CARDS, request);
-            if (response.Result.FuncCode != FunctionCode.ERROR)
+            if (response.Result.FuncCode != FunctionCodeType.ERROR)
             {
-                errors  = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode == FunctionCode.ERROR);
-                success = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode != FunctionCode.ERROR)?.Select(p => p.TradeCardInfo);
+                errors  = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode == FunctionCodeType.ERROR);
+                success = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode != FunctionCodeType.ERROR)?.Select(p => p.TradeCardInfo);
                 return;
             }            
             throw new EKAERException(response.Result);
         }
 
-        public TradeCardInfo ModifyTradeCard(TradeCard tradeCard)
+        public TradeCardInfoType ModifyTradeCard(TradeCardType tradeCard)
         {
-            ModifyTradeCards(new List<TradeCard> { tradeCard }, out IEnumerable<TradeCardOperationResult> errors, out IEnumerable<TradeCardInfo> success);
+            ModifyTradeCards(new List<TradeCardType> { tradeCard }, out IEnumerable<TradeCardOperationResultType> errors, out IEnumerable<TradeCardInfoType> success);
             if (errors != null && errors.Count() > 0) throw new EKAERException(errors.First().Result);
             return success.FirstOrDefault();
         }
 
-        public void ModifyTradeCards(IEnumerable<TradeCard> tradeCards, out IEnumerable<TradeCardOperationResult> errors, out IEnumerable<TradeCardInfo> success)
+        public void ModifyTradeCards(IEnumerable<TradeCardType> tradeCards, out IEnumerable<TradeCardOperationResultType> errors, out IEnumerable<TradeCardInfoType> success)
         {
             var request = BuildRequest<ManageTradeCardsRequest>();
             var index = 0;
             foreach (var tradeCard in tradeCards)
             {
                 LocalValidate(tradeCard);
-                request.TradeCardOperations.Add(new TradeCardOperation
+                request.TradeCardOperations.Add(new TradeCardOperationType
                 {
                     Index = index++,
                     Operation = OperationType.Modify,
@@ -241,22 +241,22 @@ namespace EKAER.Client
                 });
             }
             var response = Request<ManageTradeCardsResponse, ManageTradeCardsRequest>(MANAGE_TRADE_CARDS, request);
-            if (response.Result.FuncCode != FunctionCode.ERROR)
+            if (response.Result.FuncCode != FunctionCodeType.ERROR)
             {
-                errors = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode == FunctionCode.ERROR);
-                success = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode != FunctionCode.ERROR)?.Select(p => p.TradeCardInfo);
+                errors = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode == FunctionCodeType.ERROR);
+                success = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode != FunctionCodeType.ERROR)?.Select(p => p.TradeCardInfo);
                 return;
             }
             throw new EKAERException(response.Result);
         }
 
-        public void FinalizeTradeCards(IEnumerable<string> tradeCardNumbers, out IEnumerable<TradeCardOperationResult> errors, out IEnumerable<TradeCardInfo> success)
+        public void FinalizeTradeCards(IEnumerable<string> tradeCardNumbers, out IEnumerable<TradeCardOperationResultType> errors, out IEnumerable<TradeCardInfoType> success)
         {
             var request = BuildRequest<ManageTradeCardsRequest>();
             var index = 0;
             foreach(var tradeCardNumber in tradeCardNumbers)
             {
-                request.TradeCardOperations.Add(new TradeCardOperation
+                request.TradeCardOperations.Add(new TradeCardOperationType
                 {
                     Index = index++,
                     Operation = OperationType.Finalize,
@@ -264,18 +264,18 @@ namespace EKAER.Client
                 });
             }
             var response = Request<ManageTradeCardsResponse, ManageTradeCardsRequest>(MANAGE_TRADE_CARDS, request);
-            if (response.Result.FuncCode != FunctionCode.ERROR)
+            if (response.Result.FuncCode != FunctionCodeType.ERROR)
             {
-                errors = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode == FunctionCode.ERROR);
-                success = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode != FunctionCode.ERROR)?.Select(p => p.TradeCardInfo);
+                errors = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode == FunctionCodeType.ERROR);
+                success = response.TradeCardOperationsResults.ToList().Where(p => p.Result.FuncCode != FunctionCodeType.ERROR)?.Select(p => p.TradeCardInfo);
                 return;
             }
             throw new EKAERException(response.Result);
         }
 
-        public TradeCardInfo FinalizeTradeCard(string tradeCardNumber)
+        public TradeCardInfoType FinalizeTradeCard(string tradeCardNumber)
         {
-            FinalizeTradeCards(new List<string>() { tradeCardNumber }, out IEnumerable<TradeCardOperationResult> errors, out IEnumerable<TradeCardInfo> success);
+            FinalizeTradeCards(new List<string>() { tradeCardNumber }, out IEnumerable<TradeCardOperationResultType> errors, out IEnumerable<TradeCardInfoType> success);
             if(errors!=null && errors.Count() > 0)
             {
                 throw new EKAERException(errors.First().Result);

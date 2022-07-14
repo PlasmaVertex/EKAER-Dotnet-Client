@@ -20,19 +20,17 @@
 
 using EKAER.Schema.Management;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EKAER.Errors
 {
     public class EKAERException : Exception
     {
         public BaseResultType Result { get; set; }
-        public ReasonCodeType ReasonCode { get; set; }        
+        public Schema.Common.ReasonCodeType ReasonCode { get; set; }
         public EKAERException(BaseResultType result) : base(result.Msg)
         {
             Result = result;
-            ReasonCode = result.ReasonCode;            
+            ReasonCode = result.ReasonCode;
         }
     }
 }

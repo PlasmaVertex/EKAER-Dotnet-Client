@@ -51,7 +51,7 @@ namespace EKAER.Client.Sample
                 {
                     foreach (var elem in plan.Items)
                     {
-                        elem.ItemOperation = ItemOperation.Modify;
+                        elem.ItemOperation = ItemOperationType.Modify;
                         elem.ItemOperationSpecified = true;
                     }
                 }
@@ -86,13 +86,13 @@ namespace EKAER.Client.Sample
             }
         }
 
-        static TradeCard BuildNewTradeCard()
+        static TradeCardType BuildNewTradeCard()
         {
-            var tradeCard = new TradeCard
+            var tradeCard = new TradeCardType
             {
                 OrderNumber = "1224345",
-                TradeCardType = Schema.Common.TradeCardType.Normal,
-                TradeType = Schema.Common.TradeType.Domestic,
+                TradeCardType = Schema.Common.TradeCardType.N,
+                TradeType = Schema.Common.TradeType.D,
                 SellerName = "Minta eladó Kft.",
                 SellerVatNumber = VATNumber,
                 SellerCountry = "HU",
@@ -104,23 +104,23 @@ namespace EKAER.Client.Sample
                 ArrivalDate = DateTime.Now.AddDays(1),
                 ArrivalDateSpecified = true,
                 LoadDate = DateTime.Now,
-                Vehicle = new Vehicle { PlateNumber = "ABC123" }
+                Vehicle = new BasicVehicleDetailType { PlateNumber = "ABC123" }
             };
-            var deliveryPlan = new DeliveryPlan
+            var deliveryPlan = new DeliveryPlanType
             {
                 IsDestinationCompanyIdentical = false,
-                LoadLocation = new Location { Country = "HU", Name = "Minta eladó Kft.", VATNumber = "12345676", StreetType = "utca", City = "Debrecen", ZipCode = "4024", Street = "Minta", StreetNumber = "1" },
-                UnloadLocation = new Location { Country = "HU", Name = "Minta vevő Kft", VATNumber = "12345676", StreetType = "utca", City = "Budapest", ZipCode = "1223", Street = "Minta", StreetNumber = "1" }
+                LoadLocation = new LocationType { Country = "HU", Name = "Minta eladó Kft.", VATNumber = "12345676", StreetType = "utca", City = "Debrecen", ZipCode = "4024", Street = "Minta", StreetNumber = "1" },
+                UnloadLocation = new LocationType { Country = "HU", Name = "Minta vevő Kft", VATNumber = "12345676", StreetType = "utca", City = "Budapest", ZipCode = "1223", Street = "Minta", StreetNumber = "1" }
             };
             var item = new TradeCardItemType
             {
                 ProductName = "Sajtos pogácsa",
-                TradeReason = Schema.Common.TradeReason.Sale,
+                TradeReason = Schema.Common.TradeReasonType.S,
                 Weight = 7500,
                 Value = 1000000,
                 ValueSpecified = true,
                 ProductVtsz = "38248400",
-                ItemOperation = ItemOperation.Create
+                ItemOperation = ItemOperationType.Create
             };
             deliveryPlan.Items.Add(item);
             tradeCard.DeliveryPlans.Add(deliveryPlan);

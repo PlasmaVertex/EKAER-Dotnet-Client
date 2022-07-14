@@ -28,15 +28,14 @@ namespace EKAER.Validation
 {
     public static class Validators
     {
-        public static void Validate(this QueryParams queryParams)
+        public static void Validate(this QueryParamsType queryParams)
         {
-            int maxRowNum = 0;
+
             if (queryParams == null) throw new ArgumentNullException("queryParams");
             if (queryParams.InsertFromDate > DateTime.Now) throw new ArgumentOutOfRangeException("InsertFromDate");
             if (queryParams.InsertFromDate > queryParams.InsertToDate) throw new ArgumentException("InsertFromDate > InsertToDate");
             if (queryParams.InsertToDate.Subtract(queryParams.InsertFromDate).TotalDays > 30) throw new ArgumentException("Interval must less or equal to 30");
-            if (!string.IsNullOrEmpty(queryParams.MaxRowNum) && !int.TryParse(queryParams.MaxRowNum, out maxRowNum)) throw new ArgumentException("MaxRowNum is not a number");
-            if (maxRowNum > 1000 || maxRowNum < 1) throw new ArgumentException("MaxRowNum must be between 1 and 1000");
+            if (queryParams.MaxRowNum > 1000 || queryParams.MaxRowNum < 1) throw new ArgumentException("MaxRowNum must be between 1 and 1000");
             if (!string.IsNullOrEmpty(queryParams.OrderNumber) && queryParams.OrderNumber.Length > 50) throw new ArgumentException("OrderNumber must be shorter than 51 characters");
             if (!string.IsNullOrEmpty(queryParams.PlateNumber) && !Regex.IsMatch(queryParams.PlateNumber, "[A-Z0-9ÖŐÜŰ]{4,15}")) throw new ArgumentException("Invalid Plate Number");
         }        
